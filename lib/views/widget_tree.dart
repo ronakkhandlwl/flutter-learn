@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/data/constants.dart';
 import 'package:flutter_app/data/notifiers.dart';
 import 'package:flutter_app/views/pages/home_page.dart';
 import 'package:flutter_app/views/pages/profile_page.dart';
 import 'package:flutter_app/views/pages/settings_page.dart';
 import 'package:flutter_app/views/widget/navbar_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 List<Widget> pages = [HomePage(), ProfilePage()];
 
@@ -21,8 +23,14 @@ class WidgetTree extends StatelessWidget {
             valueListenable: isDarkModeNotifier,
             builder: (context, isDarkMode, child) {
               return IconButton(
-                onPressed: () {
+                onPressed: () async {
                   isDarkModeNotifier.value = !isDarkMode;
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.setBool(
+                    KConstants.themeModeKey,
+                    isDarkModeNotifier.value,
+                  );
                 },
                 icon: isDarkMode
                     ? Icon(Icons.light_mode)
@@ -36,7 +44,9 @@ class WidgetTree extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return SettingsPage(title: "Ronak, Welcome to settings page",);
+                    return SettingsPage(
+                      title: "Ronak, Welcome to settings page",
+                    );
                   },
                 ),
               );
